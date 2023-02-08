@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Game Animal Crossing</string>
+    <string name="sample_string"><![CDATA[- Bạn hãy nhập vào ô số điểm cược bạn muốn <br/> <br/>- Chọn một con vật bạn muốn cược ở ô Box <br/> <br/>- Sau đó, bấm Start để bắt đầu trò chơi
+<br/> <br/>- Khi trò chơi kết thúc sẽ hiện lên thông báo<br/> <br/>- Bấm Restart để chơi lại từ đầu]]></string>
+</resources>
