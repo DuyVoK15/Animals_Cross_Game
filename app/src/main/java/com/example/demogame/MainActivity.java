@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -52,18 +53,60 @@ public class MainActivity extends AppCompatActivity {
         player2.setEnabled(false);
         player3.setEnabled(false);
 
+        edtCuoc1.setVisibility(View.INVISIBLE);
+        edtCuoc2.setVisibility(View.INVISIBLE);
+        edtCuoc3.setVisibility(View.INVISIBLE);
+
+        cbPlayer1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(cbPlayer1.isChecked()){
+                    edtCuoc1.setVisibility(View.VISIBLE);
+                } else {
+                    edtCuoc1.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        cbPlayer2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(cbPlayer2.isChecked()){
+                    edtCuoc2.setVisibility(View.VISIBLE);
+                } else {
+                    edtCuoc2.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        cbPlayer3.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(cbPlayer3.isChecked()){
+                    edtCuoc3.setVisibility(View.VISIBLE);
+                } else {
+                    edtCuoc3.setVisibility(View.GONE);
+                }
+            }
+        });
+
+
         count = 0;
 
-        final CountDownTimer countDownTimer = new CountDownTimer(20000, 500) {
+        final CountDownTimer countDownTimer = new CountDownTimer(20000, 600) {
             @Override
             public void onTick(long l) {
+
+                String txtBetAmount1 = edtCuoc1.getText().toString();
+                String txtBetAmount2 = edtCuoc2.getText().toString();
+                String txtBetAmount3 = edtCuoc3.getText().toString();
+
                 count++;
 
                 if (count % 2 == 0) {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green));
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_yellow));
                     player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
-
                 } else {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green_move));
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_move));
@@ -74,19 +117,32 @@ public class MainActivity extends AppCompatActivity {
                 if (player1.getProgress() >= player1.getMax()) {
                     win(this);
                     Toast.makeText(getApplicationContext(), "The GREEN BIRD win!", Toast.LENGTH_LONG).show();
+                    point+= (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
+                    point+= (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                    point+= (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+
+                    txtPoint.setText(point+"");
 
                 }
-                if (player2.getProgress() >= player1.getMax()) {
+                if (player2.getProgress() >= player2.getMax()) {
                     win(this);
                     Toast.makeText(getApplicationContext(), "The YELLOW BIRD win!", Toast.LENGTH_LONG).show();
+                    point+= (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
+                    point+= (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                    point+= (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
 
+                    txtPoint.setText(point+"");
                 }
-                if (player3.getProgress() >= player1.getMax()) {
+                if (player3.getProgress() >= player3.getMax()) {
                     win(this);
                     Toast.makeText(getApplicationContext(), "The RED BIRD win!", Toast.LENGTH_LONG).show();
+                    point+= (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
+                    point+= (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                    point+= (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
 
+                    txtPoint.setText(point+"");
                 }
-                speedRandom(10);
+                speedRandom(8);
 
             }
 
