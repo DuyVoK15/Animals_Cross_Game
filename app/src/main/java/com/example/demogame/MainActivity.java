@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText edtCuoc1, edtCuoc2, edtCuoc3;
     private SeekBar player1, player2, player3;
     private CheckBox cbPlayer1, cbPlayer2, cbPlayer3;
-    private Button btnStart, btnRestart;
+    private Button btnStart, btnRestart, btnNapcard;
     private int point;
     private int count;
 
@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         cbPlayer3 = findViewById(R.id.cb_player3);
         btnStart = findViewById(R.id.start);
         btnRestart = findViewById(R.id.restart);
+        btnNapcard = findViewById(R.id.napcard);
     }
 
     @Override
@@ -48,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
         point = 200;
         mapping();
+
+
+
+        btnRestart.setVisibility(View.INVISIBLE);
 
         player1.setEnabled(false);
         player2.setEnabled(false);
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
                     edtCuoc1.setVisibility(View.VISIBLE);
                 } else {
                     edtCuoc1.setVisibility(View.GONE);
+                    edtCuoc1.setText("0");
                 }
             }
         });
@@ -75,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                     edtCuoc2.setVisibility(View.VISIBLE);
                 } else {
                     edtCuoc2.setVisibility(View.GONE);
+                    edtCuoc2.setText("0");
                 }
             }
         });
@@ -86,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     edtCuoc3.setVisibility(View.VISIBLE);
                 } else {
                     edtCuoc3.setVisibility(View.GONE);
+                    edtCuoc3.setText("0");
                 }
             }
         });
@@ -93,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
         count = 0;
 
-        final CountDownTimer countDownTimer = new CountDownTimer(20000, 600) {
+        final CountDownTimer countDownTimer = new CountDownTimer(19000, 100) {
             @Override
             public void onTick(long l) {
 
@@ -122,6 +130,9 @@ public class MainActivity extends AppCompatActivity {
                     point+= (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
 
                     txtPoint.setText(point+"");
+                    if(isGameOver()){
+                        btnNapcard.setVisibility(View.VISIBLE);
+                    }
 
                 }
                 if (player2.getProgress() >= player2.getMax()) {
@@ -132,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
                     point+= (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
 
                     txtPoint.setText(point+"");
+                    if(isGameOver()){
+                        btnNapcard.setVisibility(View.VISIBLE);
+                    }
                 }
                 if (player3.getProgress() >= player3.getMax()) {
                     win(this);
@@ -141,8 +155,13 @@ public class MainActivity extends AppCompatActivity {
                     point+= (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
 
                     txtPoint.setText(point+"");
+                    if(isGameOver()){
+                        btnNapcard.setVisibility(View.VISIBLE);
+                    }
                 }
-                speedRandom(8);
+                speedRandom1(randomOfSpeedRandom());
+                speedRandom2(randomOfSpeedRandom());
+                speedRandom3(randomOfSpeedRandom());
 
             }
 
@@ -157,6 +176,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                if (betRequire()) {
+                    countDownTimer.cancel();
+                    Toast.makeText(MainActivity.this, "Please add less money",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 disabledEditCuoc();
                 disabledCheckBox();
                 btnStart.setVisibility(View.INVISIBLE);
@@ -165,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 player2.setProgress(0);
                 player3.setProgress(0);
                 countDownTimer.start();
+
             }
 
         });
@@ -180,27 +206,81 @@ public class MainActivity extends AppCompatActivity {
                 player3.setProgress(0);
                 player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
                 Toast.makeText(MainActivity.this, "Click START to start this game", Toast.LENGTH_SHORT).show();
-
+                btnStart.setVisibility(View.VISIBLE);
+                btnRestart.setVisibility(View.INVISIBLE);
             }
         });
 
+        // Button Nap Card
+        btnNapcard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                point += 200;
+                txtPoint.setText(point+"");
+                if(point > 0) {
+                    btnNapcard.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
     }
     // End onCreate()
 
+    boolean betRequire(){
 
-    void speedRandom(int speed) {
+        int sumBetAmount = 0;
+
+        if(cbPlayer1.isChecked()){
+            sumBetAmount += Integer.parseInt(edtCuoc1.getText().toString());
+        }
+        if (cbPlayer2.isChecked()){
+            sumBetAmount += Integer.parseInt(edtCuoc2.getText().toString());
+        }
+        if (cbPlayer3.isChecked()){
+            sumBetAmount += Integer.parseInt(edtCuoc3.getText().toString());
+        }
+        if (sumBetAmount<=point) return false;
+        return true;
+    }
+
+    boolean isGameOver(){
+        String txtSumPoint = txtPoint.getText().toString();
+        if(Integer.parseInt(txtSumPoint)<=0){
+            Toast.makeText(MainActivity.this,"GAME OVER!! Let's recharge card!", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return false;
+    }
+
+    void speedRandom1(int speed) {
         Random random = new Random();
         player1.setProgress(player1.getProgress() + random.nextInt(speed));
+
+    }
+
+    void speedRandom2(int speed) {
+        Random random = new Random();
         player2.setProgress(player2.getProgress() + random.nextInt(speed));
+
+    }
+
+    void speedRandom3(int speed) {
+        Random random = new Random();
         player3.setProgress(player3.getProgress() + random.nextInt(speed));
 
+    }
+
+    int randomOfSpeedRandom(){
+        int max = 20;
+        int min = 7;
+        int rd = (int)Math.random() * (max - min + 1) + min;
+        return rd;
     }
 
     void win(CountDownTimer countDownTimer) {
         enabledCheckBox();
         enabledEditCuoc();
-        btnStart.setVisibility(View.VISIBLE);
+        btnRestart.setVisibility(View.VISIBLE);
         countDownTimer.cancel();
 
     }
