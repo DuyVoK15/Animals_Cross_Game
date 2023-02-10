@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox cbPlayer1, cbPlayer2, cbPlayer3;
     private Button btnStart, btnRestart, btnNapcard;
     private int point;
-    private int count;
+    private int count1;
+    private int count2;
+    private int count3;
     private static final int POINT = 1000;
     private int recievePoint;
     MediaPlayer mediaPlayer;
@@ -120,7 +122,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        count = 0;
+        count1 = 0;
+        count2 = 0;
+        count3= 0;
         // CountDownTimer
         final CountDownTimer countDownTimer1 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
             @Override
@@ -130,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
                 String txtBetAmount2 = edtCuoc2.getText().toString();
                 String txtBetAmount3 = edtCuoc3.getText().toString();
 
-                count++;
+                count1++;
 
                 // Movation thumb
-                if (count % 2 == 0) {
+                if (count1 % 2 == 0) {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green));
                 } else {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green_move));
@@ -190,10 +194,10 @@ public class MainActivity extends AppCompatActivity {
                 String txtBetAmount2 = edtCuoc2.getText().toString();
                 String txtBetAmount3 = edtCuoc3.getText().toString();
 
-                count++;
+                count2++;
 
                 // Movation thumb
-                if (count % 2 == 0) {
+                if (count2 % 2 == 0) {
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_yellow));
                 } else {
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_move));
@@ -247,10 +251,10 @@ public class MainActivity extends AppCompatActivity {
                 String txtBetAmount2 = edtCuoc2.getText().toString();
                 String txtBetAmount3 = edtCuoc3.getText().toString();
 
-                count++;
+                count3++;
 
                 // Movation thumb
-                if (count % 2 == 0) {
+                if (count3 % 2 == 0) {
                     player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
                 } else {
                     player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask_move));
