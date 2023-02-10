@@ -3,9 +3,16 @@ package com.example.demogame;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.graphics.Typeface;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private int count;
     private static final int POINT = 1000;
     private int recievePoint;
+    MediaPlayer mediaPlayer;
 
     // Mapping
     private void mapping() {
@@ -51,8 +60,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MediaPlayer music = MediaPlayer.create(MainActivity.this, R.raw.music);
-        music.start();
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioAttributes(new AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA).build());
+        mediaPlayer = MediaPlayer.create(this, R.raw.music);
+
 
         recievePoint = 0;
         point = POINT;
@@ -109,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         count = 0;
         // CountDownTimer
-        final CountDownTimer countDownTimer = new CountDownTimer(20000, 250) {
+        final CountDownTimer countDownTimer1 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
             @Override
             public void onTick(long l) {
 
@@ -122,97 +135,161 @@ public class MainActivity extends AppCompatActivity {
                 // Movation thumb
                 if (count % 2 == 0) {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green));
-                    player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_yellow));
-                    player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
                 } else {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green_move));
+
+                }
+
+                // Who win? and get point
+                if (player1.getProgress() >= player1.getMax() || player2.getProgress() >= player2.getMax() || player3.getProgress() >= player3.getMax()) {
+                    win(this);
+
+                    if (player1.getProgress() >= player1.getMax()) {
+                        customToast("The GREEN BIRD win!");
+                        // Recieve point
+                        recievePoint += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
+                        recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                        recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                        if (recievePoint >= 0) {
+                            txtRecievePoint.setText("+" + recievePoint + "");
+                        } else {
+                            txtRecievePoint.setText(recievePoint + "");
+                        }
+
+                        // Point
+                        point += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
+                        point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                        point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                        txtPoint.setText(point + "");
+                    }
+                    // Game over
+                    if (isGameOver()) {
+                        btnNapcard.setVisibility(View.VISIBLE);
+                    }
+
+                }
+
+
+                // Set speed Random
+                speedRandom1(7);
+
+
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        };
+
+        final CountDownTimer countDownTimer2 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
+            @Override
+            public void onTick(long l) {
+
+                String txtBetAmount1 = edtCuoc1.getText().toString();
+                String txtBetAmount2 = edtCuoc2.getText().toString();
+                String txtBetAmount3 = edtCuoc3.getText().toString();
+
+                count++;
+
+                // Movation thumb
+                if (count % 2 == 0) {
+                    player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_yellow));
+                } else {
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_move));
+
+                }
+
+                // Who win? and get point
+                if (player1.getProgress() >= player1.getMax() || player3.getProgress() >= player3.getMax() || player2.getProgress() >= player2.getMax()) {
+                    win(this);
+
+                    if (player2.getProgress() >= player2.getMax()) {
+                        customToast("The YELLOW BIRD win!");
+                        // Recieve point
+                        recievePoint += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
+                        recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                        recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                        if (recievePoint >= 0) {
+                            txtRecievePoint.setText("+" + recievePoint + "");
+                        } else {
+                            txtRecievePoint.setText(recievePoint + "");
+                        }
+
+                        // Point
+                        point += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
+                        point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                        point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                        txtPoint.setText(point + "");
+                    }
+                    // Game over
+                    if (isGameOver()) {
+                        btnNapcard.setVisibility(View.VISIBLE);
+                    }
+                }
+
+                // Set speed Random
+
+                speedRandom2(7);
+
+            }
+
+            @Override
+            public void onFinish() {
+
+            }
+        };
+
+        final CountDownTimer countDownTimer3 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
+            @Override
+            public void onTick(long l) {
+                String txtBetAmount1 = edtCuoc1.getText().toString();
+                String txtBetAmount2 = edtCuoc2.getText().toString();
+                String txtBetAmount3 = edtCuoc3.getText().toString();
+
+                count++;
+
+                // Movation thumb
+                if (count % 2 == 0) {
+                    player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
+                } else {
                     player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask_move));
 
                 }
 
                 // Who win? and get point
-                if (player1.getProgress() >= player1.getMax()) {
+                if (player1.getProgress() >= player1.getMax() || player2.getProgress() >= player2.getMax() || player3.getProgress() >= player3.getMax()) {
                     win(this);
-                    Toast.makeText(getApplicationContext(), "The GREEN BIRD win!", Toast.LENGTH_LONG).show();
 
-                    // Recieve point
-                    recievePoint += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
-                    recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                    recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                    if (recievePoint >= 0) {
-                        txtRecievePoint.setText("+" + recievePoint + "");
-                    } else {
-                        txtRecievePoint.setText(recievePoint + "");
+                    if (player3.getProgress() >= player3.getMax()) {
+                        customToast("The RED BIRD win!");
+
+                        // Recieve point
+                        recievePoint += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
+                        recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                        recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                        if (recievePoint >= 0) {
+                            txtRecievePoint.setText("+" + recievePoint + "");
+                        } else {
+                            txtRecievePoint.setText(recievePoint + "");
+                        }
+
+                        // Point
+                        point += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
+                        point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                        point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                        txtPoint.setText(point + "");
                     }
-
-                    // Point
-                    point += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
-                    point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                    point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                    txtPoint.setText(point + "");
-
-                    // Game over
-                    if (isGameOver()) {
-                        btnNapcard.setVisibility(View.VISIBLE);
-                    }
-
-                }
-
-                if (player2.getProgress() >= player2.getMax()) {
-                    win(this);
-                    Toast.makeText(getApplicationContext(), "The YELLOW BIRD win!", Toast.LENGTH_LONG).show();
-
-                    // Recieve point
-                    recievePoint += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
-                    recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                    recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                    if (recievePoint >= 0) {
-                        txtRecievePoint.setText("+" + recievePoint + "");
-                    } else {
-                        txtRecievePoint.setText(recievePoint + "");
-                    }
-
-                    // Point
-                    point += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
-                    point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                    point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                    txtPoint.setText(point + "");
-
                     // Game over
                     if (isGameOver()) {
                         btnNapcard.setVisibility(View.VISIBLE);
                     }
                 }
-                if (player3.getProgress() >= player3.getMax()) {
-                    win(this);
-                    Toast.makeText(getApplicationContext(), "The RED BIRD win!", Toast.LENGTH_LONG).show();
 
-                    // Recieve point
-                    recievePoint += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
-                    recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                    recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                    if (recievePoint >= 0) {
-                        txtRecievePoint.setText("+" + recievePoint + "");
-                    } else {
-                        txtRecievePoint.setText(recievePoint + "");
-                    }
-
-                    // Point
-                    point += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
-                    point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                    point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                    txtPoint.setText(point + "");
-
-                    // Game over
-                    if (isGameOver()) {
-                        btnNapcard.setVisibility(View.VISIBLE);
-                    }
-                }
                 // Set speed Random
-                speedRandom1(randomOfSpeedRandom(randomOfMin(), randomOfMax()));
-                speedRandom2(randomOfSpeedRandom(randomOfMin(), randomOfMax()));
-                speedRandom3(randomOfSpeedRandom(randomOfMin(), randomOfMax()));
+
+                speedRandom3(7);
+
             }
 
             @Override
@@ -225,27 +302,46 @@ public class MainActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (isEmptyEdtCuoc()) {
+                    countDownTimer1.cancel();
+                    countDownTimer2.cancel();
+                    countDownTimer3.cancel();
+                    customToast("Bet amount is empty. Please enter amount!");
+                    return;
+                }
+
 
                 if (betRequire()) {
-                    countDownTimer.cancel();
-                    Toast.makeText(MainActivity.this, "Please add less money", Toast.LENGTH_SHORT).show();
+                    countDownTimer1.cancel();
+                    countDownTimer2.cancel();
+                    countDownTimer3.cancel();
+                    customToast("Your balance is not enough. Please enter less than!");
                     return;
                 }
 
                 if (isEnoughMoney()) {
-                    countDownTimer.cancel();
-                    Toast.makeText(MainActivity.this, "You are lost money! Please Nạp Nard!", Toast.LENGTH_SHORT).show();
+                    countDownTimer1.cancel();
+                    countDownTimer2.cancel();
+                    countDownTimer3.cancel();
+                    customToast("You ran out of money!");
                     return;
                 }
 
+
+                mediaPlayer.start();
                 disabledEditCuoc();
                 disabledCheckBox();
                 btnStart.setVisibility(View.INVISIBLE);
-                countDownTimer.cancel();
+                countDownTimer1.cancel();
+                countDownTimer2.cancel();
+                countDownTimer3.cancel();
                 player1.setProgress(0);
                 player2.setProgress(0);
                 player3.setProgress(0);
-                countDownTimer.start();
+                countDownTimer1.start();
+                countDownTimer2.start();
+                countDownTimer3.start();
+
 
             }
 
@@ -261,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                 player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_yellow));
                 player3.setProgress(0);
                 player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
-                Toast.makeText(MainActivity.this, "Click START to start this game", Toast.LENGTH_SHORT).show();
+                customToast("Click START to start this game");
                 btnStart.setVisibility(View.VISIBLE);
                 btnRestart.setVisibility(View.INVISIBLE);
                 txtRecievePoint.setText("0");
@@ -321,10 +417,27 @@ public class MainActivity extends AppCompatActivity {
     boolean isGameOver() {
         String txtSumPoint = txtPoint.getText().toString();
         if (Integer.parseInt(txtSumPoint) <= 0) {
-            Toast.makeText(MainActivity.this, "GAME OVER!! Let's recharge card!", Toast.LENGTH_SHORT).show();
+            customToast("GAME OVER!! Let's recharge card!");
             return true;
         }
         return false;
+    }
+
+    boolean isEmptyEdtCuoc() {
+
+        if (TextUtils.isEmpty(edtCuoc1.getText().toString())) {
+            return true;
+        }
+
+        if (TextUtils.isEmpty(edtCuoc2.getText().toString())) {
+            return true;
+        }
+
+        if (TextUtils.isEmpty(edtCuoc3.getText().toString())) {
+            return true;
+        }
+        return false;
+
     }
 
     void speedRandom1(int speed) {
@@ -342,22 +455,19 @@ public class MainActivity extends AppCompatActivity {
         player3.setProgress((player3.getProgress() + random.nextInt(speed)));
     }
 
-    int randomOfSpeedRandom(int min, int max) {
-        int rd = (int) Math.random() * (max - min + 1) + min;
+    int randomOfMillisInFuture() {
+        Random random = new Random();
+        int max = 35000;
+        int min = 30000;
+        int rd = random.nextInt(max - min + 1) + min;
         return rd;
     }
 
-    int randomOfMax() {
-        int max = 150;
-        int min = 50;
-        int rd = (int) Math.random() * (max - min + 1) + min;
-        return rd;
-    }
-
-    int randomOfMin() {
-        int max = 25;
-        int min = 5;
-        int rd = (int) Math.random() * (max - min + 1) + min;
+    int randomOfCountDownInterval() {
+        Random random = new Random();
+        int max = 400;
+        int min = 300;
+        int rd = random.nextInt(max - min + 1) + min;
         return rd;
     }
 
@@ -367,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
         btnRestart.setVisibility(View.VISIBLE);
         txtRecievePoint.setVisibility(View.VISIBLE);
         countDownTimer.cancel();
-
+        mediaPlayer.pause();
     }
 
     void enabledCheckBox() {
@@ -392,6 +502,22 @@ public class MainActivity extends AppCompatActivity {
         edtCuoc1.setFocusable(false);
         edtCuoc2.setFocusable(false);
         edtCuoc3.setFocusable(false);
+    }
+
+    void customToast(String text) {
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM, 0, 125);
+        TextView textView = new androidx.appcompat.widget.AppCompatTextView(MainActivity.this);
+        textView.setBackground(getDrawable(R.drawable.custom_textview_toast));
+        textView.setTextSize(20);
+        textView.setGravity(Gravity.CENTER);
+        Typeface typeface = Typeface.create("serif", Typeface.BOLD_ITALIC);
+        textView.setTypeface(typeface);
+        textView.setPadding(50, 50, 50, 50);
+        textView.setText(text);
+        toast.setView(textView);
+        toast.show();
+
     }
 
 }
