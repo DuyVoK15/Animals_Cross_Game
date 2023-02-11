@@ -5,10 +5,7 @@ import androidx.core.content.ContextCompat;
 
 import android.graphics.Typeface;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.TextUtils;
@@ -22,39 +19,44 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView txtPoint, txtRecievePoint;
-    private EditText edtCuoc1, edtCuoc2, edtCuoc3;
-    private SeekBar player1, player2, player3;
-    private CheckBox cbPlayer1, cbPlayer2, cbPlayer3;
-    private Button btnStart, btnRestart, btnNapcard;
-    private int point;
-    private int count1;
-    private int count2;
-    private int count3;
-    private static final int POINT = 1000;
-    private int recievePoint;
+
+    // Declare
+    TextView txtPoint, txtRecievePoint, txtCountDownStart;
+    EditText edtPlayer1, edtPlayer2, edtPlayer3;
+    SeekBar player1, player2, player3;
+    CheckBox cbPlayer1, cbPlayer2, cbPlayer3;
+    Button btnStart, btnRestart, btnNapcard;
+    int point;
+    int count1;
+    int count2;
+    int count3;
+    static final int POINT = 1000;
+    int recievePoint;
     MediaPlayer mediaPlayer;
+    CountDownTimer countDownTimer1, countDownTimer2, countDownTimer3;
 
     // Mapping
     private void mapping() {
         txtPoint = findViewById(R.id.point);
         txtRecievePoint = findViewById(R.id.recievePoint);
-        edtCuoc1 = findViewById(R.id.edt01);
-        edtCuoc2 = findViewById(R.id.edt02);
-        edtCuoc3 = findViewById(R.id.edt03);
+        txtCountDownStart = findViewById((R.id.textCountDownStart));
+        edtPlayer1 = findViewById(R.id.edt_Player1);
+        edtPlayer2 = findViewById(R.id.edt_Player2);
+        edtPlayer3 = findViewById(R.id.edt_player3);
         player1 = findViewById(R.id.player1);
         player2 = findViewById(R.id.player2);
         player3 = findViewById(R.id.player3);
         cbPlayer1 = findViewById(R.id.cb_player1);
         cbPlayer2 = findViewById(R.id.cb_player2);
         cbPlayer3 = findViewById(R.id.cb_player3);
-        btnStart = findViewById(R.id.start);
-        btnRestart = findViewById(R.id.restart);
-        btnNapcard = findViewById(R.id.napcard);
+        btnStart = findViewById(R.id.btnStart);
+        btnRestart = findViewById(R.id.btnRestart);
+        btnNapcard = findViewById(R.id.btnNapcard);
     }
 
     @Override
@@ -68,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 .setUsage(AudioAttributes.USAGE_MEDIA).build());
         mediaPlayer = MediaPlayer.create(this, R.raw.music);
 
-
         recievePoint = 0;
         point = POINT;
         mapping();
@@ -80,19 +81,24 @@ public class MainActivity extends AppCompatActivity {
         player2.setEnabled(false);
         player3.setEnabled(false);
 
-        edtCuoc1.setVisibility(View.INVISIBLE);
-        edtCuoc2.setVisibility(View.INVISIBLE);
-        edtCuoc3.setVisibility(View.INVISIBLE);
+        edtPlayer1.setVisibility(View.INVISIBLE);
+        edtPlayer2.setVisibility(View.INVISIBLE);
+        edtPlayer3.setVisibility(View.INVISIBLE);
 
         // Show editext when check box is checked
         cbPlayer1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (cbPlayer1.isChecked()) {
-                    edtCuoc1.setVisibility(View.VISIBLE);
+                    edtPlayer1.setVisibility(View.VISIBLE);
+                    edtPlayer1.setText("");
                 } else {
-                    edtCuoc1.setVisibility(View.GONE);
-                    edtCuoc1.setText("0");
+                    edtPlayer1.setVisibility(View.GONE);
+                    edtPlayer1.setText("");
+                }
+
+                if (!cbPlayer1.isChecked()) {
+                    edtPlayer1.setText("0");
                 }
             }
         });
@@ -101,10 +107,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (cbPlayer2.isChecked()) {
-                    edtCuoc2.setVisibility(View.VISIBLE);
+                    edtPlayer2.setVisibility(View.VISIBLE);
+                    edtPlayer2.setText("");
                 } else {
-                    edtCuoc2.setVisibility(View.GONE);
-                    edtCuoc2.setText("0");
+                    edtPlayer2.setVisibility(View.GONE);
+                    edtPlayer2.setText("0");
                 }
             }
         });
@@ -113,31 +120,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (cbPlayer3.isChecked()) {
-                    edtCuoc3.setVisibility(View.VISIBLE);
+                    edtPlayer3.setVisibility(View.VISIBLE);
+                    edtPlayer3.setText("");
                 } else {
-                    edtCuoc3.setVisibility(View.GONE);
-                    edtCuoc3.setText("0");
+                    edtPlayer3.setVisibility(View.GONE);
+                    edtPlayer3.setText("0");
                 }
+
             }
         });
 
 
         count1 = 0;
         count2 = 0;
-        count3= 0;
+        count3 = 0;
         // CountDownTimer
-        final CountDownTimer countDownTimer1 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
+        countDownTimer1 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
             @Override
             public void onTick(long l) {
 
-                String txtBetAmount1 = edtCuoc1.getText().toString();
-                String txtBetAmount2 = edtCuoc2.getText().toString();
-                String txtBetAmount3 = edtCuoc3.getText().toString();
+                String txtBetAmount1 = edtPlayer1.getText().toString();
+                String txtBetAmount2 = edtPlayer2.getText().toString();
+                String txtBetAmount3 = edtPlayer3.getText().toString();
 
                 count1++;
 
                 // Movation thumb
-                if (count1 % 2 == 0) {
+                if (count1 % 2 != 0) {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green));
                 } else {
                     player1.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_green_move));
@@ -145,27 +154,26 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Who win? and get point
-                if (player1.getProgress() >= player1.getMax() || player2.getProgress() >= player2.getMax() || player3.getProgress() >= player3.getMax()) {
-                    win(this);
+                if (player1.getProgress() >= player1.getMax()) {
+                    cancelCountDownTimer();
+                    customToast("The GREEN BIRD win!");
 
-                    if (player1.getProgress() >= player1.getMax()) {
-                        customToast("The GREEN BIRD win!");
-                        // Recieve point
-                        recievePoint += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
-                        recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                        recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                        if (recievePoint >= 0) {
-                            txtRecievePoint.setText("+" + recievePoint + "");
-                        } else {
-                            txtRecievePoint.setText(recievePoint + "");
-                        }
-
-                        // Point
-                        point += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
-                        point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                        point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                        txtPoint.setText(point + "");
+                    // Recieve point
+                    recievePoint += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
+                    recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                    recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                    if (recievePoint >= 0) {
+                        txtRecievePoint.setText("+" + recievePoint + "");
+                    } else {
+                        txtRecievePoint.setText(recievePoint + "");
                     }
+
+                    // Point
+                    point += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
+                    point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                    point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                    txtPoint.setText(point + "");
+
                     // Game over
                     if (isGameOver()) {
                         btnNapcard.setVisibility(View.VISIBLE);
@@ -186,18 +194,18 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        final CountDownTimer countDownTimer2 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
+        countDownTimer2 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
             @Override
             public void onTick(long l) {
 
-                String txtBetAmount1 = edtCuoc1.getText().toString();
-                String txtBetAmount2 = edtCuoc2.getText().toString();
-                String txtBetAmount3 = edtCuoc3.getText().toString();
+                String txtBetAmount1 = edtPlayer1.getText().toString();
+                String txtBetAmount2 = edtPlayer2.getText().toString();
+                String txtBetAmount3 = edtPlayer3.getText().toString();
 
                 count2++;
 
                 // Movation thumb
-                if (count2 % 2 == 0) {
+                if (count2 % 2 != 0) {
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_yellow));
                 } else {
                     player2.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_move));
@@ -205,27 +213,26 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Who win? and get point
-                if (player1.getProgress() >= player1.getMax() || player3.getProgress() >= player3.getMax() || player2.getProgress() >= player2.getMax()) {
-                    win(this);
+                if (player2.getProgress() >= player2.getMax()) {
+                    cancelCountDownTimer();
+                    customToast("The YELLOW BIRD win!");
 
-                    if (player2.getProgress() >= player2.getMax()) {
-                        customToast("The YELLOW BIRD win!");
-                        // Recieve point
-                        recievePoint += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
-                        recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                        recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                        if (recievePoint >= 0) {
-                            txtRecievePoint.setText("+" + recievePoint + "");
-                        } else {
-                            txtRecievePoint.setText(recievePoint + "");
-                        }
-
-                        // Point
-                        point += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
-                        point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                        point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
-                        txtPoint.setText(point + "");
+                    // Recieve point
+                    recievePoint += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
+                    recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                    recievePoint += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                    if (recievePoint >= 0) {
+                        txtRecievePoint.setText("+" + recievePoint + "");
+                    } else {
+                        txtRecievePoint.setText(recievePoint + "");
                     }
+
+                    // Point
+                    point += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
+                    point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                    point += (cbPlayer3.isChecked()) ? -Integer.parseInt(txtBetAmount3) : +0;
+                    txtPoint.setText(point + "");
+
                     // Game over
                     if (isGameOver()) {
                         btnNapcard.setVisibility(View.VISIBLE);
@@ -233,9 +240,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // Set speed Random
-
                 speedRandom2(7);
-
             }
 
             @Override
@@ -244,46 +249,43 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        final CountDownTimer countDownTimer3 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
+        countDownTimer3 = new CountDownTimer(randomOfMillisInFuture(), randomOfCountDownInterval()) {
             @Override
             public void onTick(long l) {
-                String txtBetAmount1 = edtCuoc1.getText().toString();
-                String txtBetAmount2 = edtCuoc2.getText().toString();
-                String txtBetAmount3 = edtCuoc3.getText().toString();
+                String txtBetAmount1 = edtPlayer1.getText().toString();
+                String txtBetAmount2 = edtPlayer2.getText().toString();
+                String txtBetAmount3 = edtPlayer3.getText().toString();
 
                 count3++;
 
                 // Movation thumb
-                if (count3 % 2 == 0) {
+                if (count3 % 2 != 0) {
                     player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask));
                 } else {
                     player3.setThumb(ContextCompat.getDrawable(MainActivity.this, R.drawable.icon_bird_red_mask_move));
-
                 }
 
                 // Who win? and get point
-                if (player1.getProgress() >= player1.getMax() || player2.getProgress() >= player2.getMax() || player3.getProgress() >= player3.getMax()) {
-                    win(this);
+                if (player3.getProgress() >= player3.getMax()) {
+                    cancelCountDownTimer();
+                    customToast("The RED BIRD win!");
 
-                    if (player3.getProgress() >= player3.getMax()) {
-                        customToast("The RED BIRD win!");
-
-                        // Recieve point
-                        recievePoint += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
-                        recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                        recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                        if (recievePoint >= 0) {
-                            txtRecievePoint.setText("+" + recievePoint + "");
-                        } else {
-                            txtRecievePoint.setText(recievePoint + "");
-                        }
-
-                        // Point
-                        point += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
-                        point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
-                        point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
-                        txtPoint.setText(point + "");
+                    // Recieve point
+                    recievePoint += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
+                    recievePoint += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                    recievePoint += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                    if (recievePoint >= 0) {
+                        txtRecievePoint.setText("+" + recievePoint + "");
+                    } else {
+                        txtRecievePoint.setText(recievePoint + "");
                     }
+
+                    // Point
+                    point += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
+                    point += (cbPlayer2.isChecked()) ? -Integer.parseInt(txtBetAmount2) : +0;
+                    point += (cbPlayer1.isChecked()) ? -Integer.parseInt(txtBetAmount1) : +0;
+                    txtPoint.setText(point + "");
+
                     // Game over
                     if (isGameOver()) {
                         btnNapcard.setVisibility(View.VISIBLE);
@@ -306,6 +308,16 @@ public class MainActivity extends AppCompatActivity {
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Check is choose anyone
+                if(isChoose()){
+                    countDownTimer1.cancel();
+                    countDownTimer2.cancel();
+                    countDownTimer3.cancel();
+                    customToast("Please choose one or many!");
+                    return;
+                }
+
+                // Check empty edittext cuoc
                 if (isEmptyEdtCuoc()) {
                     countDownTimer1.cancel();
                     countDownTimer2.cancel();
@@ -314,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-
+                // Check bet amount
                 if (betRequire()) {
                     countDownTimer1.cancel();
                     countDownTimer2.cancel();
@@ -323,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+                // Check enough money
                 if (isEnoughMoney()) {
                     countDownTimer1.cancel();
                     countDownTimer2.cancel();
@@ -335,6 +348,8 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.start();
                 disabledEditCuoc();
                 disabledCheckBox();
+                txtCountDownStart.setVisibility(View.VISIBLE);
+                txtCountDownStart.setText("");
                 btnStart.setVisibility(View.INVISIBLE);
                 countDownTimer1.cancel();
                 countDownTimer2.cancel();
@@ -342,9 +357,31 @@ public class MainActivity extends AppCompatActivity {
                 player1.setProgress(0);
                 player2.setProgress(0);
                 player3.setProgress(0);
-                countDownTimer1.start();
-                countDownTimer2.start();
-                countDownTimer3.start();
+                int c = 0;
+                new CountDownTimer(6000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        if(millisUntilFinished/1000==0){
+                            txtCountDownStart.setText("START!");
+                        } else {
+                            txtCountDownStart.setText("" + millisUntilFinished / 1000);
+                        }
+                    }
+
+                    public void onFinish() {
+                        txtCountDownStart.setVisibility(View.INVISIBLE);
+                    }
+                }.start();
+                Timer buttonTimer = new Timer();
+                buttonTimer.schedule(new TimerTask() {
+
+                    @Override
+                    public void run() {
+                        countDownTimer1.start();
+                        countDownTimer2.start();
+                        countDownTimer3.start();
+                    }
+                }, 5000);
 
 
             }
@@ -385,39 +422,52 @@ public class MainActivity extends AppCompatActivity {
     }
     // End onCreate()
 
-    boolean betRequire() {
+    // Check is choose anyone
+    boolean isChoose(){
+        if(!cbPlayer1.isChecked() && !cbPlayer2.isChecked() && !cbPlayer3.isChecked()){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
+
+    // Check bet amonnt
+    boolean betRequire() {
         int sumBetAmount = 0;
 
         if (cbPlayer1.isChecked()) {
-            sumBetAmount += Integer.parseInt(edtCuoc1.getText().toString());
+            sumBetAmount += Integer.parseInt(edtPlayer1.getText().toString());
         }
         if (cbPlayer2.isChecked()) {
-            sumBetAmount += Integer.parseInt(edtCuoc2.getText().toString());
+            sumBetAmount += Integer.parseInt(edtPlayer2.getText().toString());
         }
         if (cbPlayer3.isChecked()) {
-            sumBetAmount += Integer.parseInt(edtCuoc3.getText().toString());
+            sumBetAmount += Integer.parseInt(edtPlayer3.getText().toString());
         }
         if (sumBetAmount <= point) return false;
         return true;
     }
 
+    // Check enough money
     boolean isEnoughMoney() {
         int sumBetAmount = 0;
         if (cbPlayer1.isChecked()) {
-            sumBetAmount += Integer.parseInt(edtCuoc1.getText().toString());
+            sumBetAmount += Integer.parseInt(edtPlayer1.getText().toString());
         }
         if (cbPlayer2.isChecked()) {
-            sumBetAmount += Integer.parseInt(edtCuoc2.getText().toString());
+            sumBetAmount += Integer.parseInt(edtPlayer2.getText().toString());
         }
         if (cbPlayer3.isChecked()) {
-            sumBetAmount += Integer.parseInt(edtCuoc3.getText().toString());
+            sumBetAmount += Integer.parseInt(edtPlayer3.getText().toString());
         }
         if (sumBetAmount == 0 && point == 0) return true;
         return false;
 
     }
 
+    // Check game over
     boolean isGameOver() {
         String txtSumPoint = txtPoint.getText().toString();
         if (Integer.parseInt(txtSumPoint) <= 0) {
@@ -427,17 +477,17 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    // Check empty bet
     boolean isEmptyEdtCuoc() {
-
-        if (TextUtils.isEmpty(edtCuoc1.getText().toString())) {
+        if (TextUtils.isEmpty(edtPlayer1.getText().toString())) {
             return true;
         }
 
-        if (TextUtils.isEmpty(edtCuoc2.getText().toString())) {
+        if (TextUtils.isEmpty(edtPlayer2.getText().toString())) {
             return true;
         }
 
-        if (TextUtils.isEmpty(edtCuoc3.getText().toString())) {
+        if (TextUtils.isEmpty(edtPlayer3.getText().toString())) {
             return true;
         }
         return false;
@@ -475,15 +525,6 @@ public class MainActivity extends AppCompatActivity {
         return rd;
     }
 
-    void win(CountDownTimer countDownTimer) {
-        enabledCheckBox();
-        enabledEditCuoc();
-        btnRestart.setVisibility(View.VISIBLE);
-        txtRecievePoint.setVisibility(View.VISIBLE);
-        countDownTimer.cancel();
-        mediaPlayer.pause();
-    }
-
     void enabledCheckBox() {
         cbPlayer1.setEnabled(true);
         cbPlayer2.setEnabled(true);
@@ -497,17 +538,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void enabledEditCuoc() {
-        edtCuoc1.setFocusableInTouchMode(true);
-        edtCuoc2.setFocusableInTouchMode(true);
-        edtCuoc3.setFocusableInTouchMode(true);
+        edtPlayer1.setFocusableInTouchMode(true);
+        edtPlayer2.setFocusableInTouchMode(true);
+        edtPlayer3.setFocusableInTouchMode(true);
     }
 
     void disabledEditCuoc() {
-        edtCuoc1.setFocusable(false);
-        edtCuoc2.setFocusable(false);
-        edtCuoc3.setFocusable(false);
+        edtPlayer1.setFocusable(false);
+        edtPlayer2.setFocusable(false);
+        edtPlayer3.setFocusable(false);
     }
 
+    // Toast custom
     void customToast(String text) {
         Toast toast = new Toast(getApplicationContext());
         toast.setGravity(Gravity.BOTTOM, 0, 125);
@@ -522,6 +564,18 @@ public class MainActivity extends AppCompatActivity {
         toast.setView(textView);
         toast.show();
 
+    }
+
+    void cancelCountDownTimer() {
+        countDownTimer1.cancel();
+        countDownTimer2.cancel();
+        countDownTimer3.cancel();
+        enabledCheckBox();
+        enabledEditCuoc();
+        btnRestart.setVisibility(View.VISIBLE);
+        txtRecievePoint.setVisibility(View.VISIBLE);
+        mediaPlayer.stop();
+        mediaPlayer = MediaPlayer.create(MainActivity.this,R.raw.music);
     }
 
 }

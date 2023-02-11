@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_labgame"
+    android:background="@drawable/backgrounds"
     tools:context=".MainActivity">
 
 
@@ -66,19 +66,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.048" />
 
-
-
-
-
     <EditText
-        android:id="@+id/edt01"
+        android:id="@+id/edt_Player1"
         android:layout_width="69dp"
         android:layout_height="50dp"
         android:background="@drawable/custom_edittext_green"
         android:ems="10"
         android:gravity="center"
-        android:inputType="number"
         android:hint="0"
+        android:inputType="number"
         android:text="0"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/cb_player1"
@@ -90,15 +86,15 @@
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/edt02"
+        android:id="@+id/edt_Player2"
         android:layout_width="69dp"
         android:layout_height="50dp"
         android:layout_marginTop="324dp"
         android:background="@drawable/custom_edittext_yellow"
         android:ems="10"
         android:gravity="center"
-        android:inputType="number"
         android:hint="0"
+        android:inputType="number"
         android:text="0"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/cb_player2"
@@ -110,15 +106,15 @@
         tools:ignore="MissingConstraints" />
 
     <EditText
-        android:id="@+id/edt03"
+        android:id="@+id/edt_player3"
         android:layout_width="69dp"
         android:layout_height="50dp"
         android:layout_marginTop="425dp"
         android:background="@drawable/custom_edittext_red"
         android:ems="10"
         android:gravity="center"
-        android:inputType="number"
         android:hint="0"
+        android:inputType="number"
         android:text="0"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/cb_player3"
@@ -142,6 +138,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.352" />
+
     <SeekBar
         android:id="@+id/player2"
         android:layout_width="320dp"
@@ -170,7 +167,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.68" />
-
 
     <CheckBox
         android:id="@+id/cb_player1"
@@ -214,9 +210,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.684" />
 
-
     <Button
-        android:id="@+id/start"
+        android:id="@+id/btnStart"
         android:layout_width="wrap_content"
         android:layout_height="70dp"
         android:layout_marginStart="8dp"
@@ -235,7 +230,7 @@
         app:layout_constraintVertical_bias="0.836" />
 
     <Button
-        android:id="@+id/restart"
+        android:id="@+id/btnRestart"
         android:layout_width="wrap_content"
         android:layout_height="70dp"
         android:layout_marginStart="10dp"
@@ -253,17 +248,27 @@
         app:layout_constraintVertical_bias="0.836" />
 
     <Button
-        android:id="@+id/napcard"
+        android:id="@+id/btnNapcard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="152dp"
         android:background="@drawable/custom_button"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:text="Nhấn để nạp Card"
+        android:text="Click to Nap Card"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.71"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textCountDownStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
