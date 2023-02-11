@@ -11,9 +11,9 @@ public class HowTo extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.how_to_play);
+        setContentView(R.layout.home);
 
-        txt1 = (TextView) findViewById(R.id.text1);
-        txt1.setText(Html.fromHtml(getResources().getString(R.string.sample_string)));
+//        txt1 = (TextView) findViewById(R.id.text1);
+//        txt1.setText(Html.fromHtml(getResources().getString(R.string.sample_string)));
     }
 }

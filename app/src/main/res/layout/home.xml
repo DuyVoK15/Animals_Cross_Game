@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_howto"
-    tools:context=".HowTo">
+    tools:context=".HowTo"
+    >
 
     <ImageView
         android:id="@+id/logo"
@@ -24,12 +25,13 @@
         app:srcCompat="@drawable/logo_angry_birds_racing" />
 
     <Button
-        android:id="@+id/btnGo"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
+        android:id="@+id/btnPlay"
+        android:layout_width="175dp"
+        android:layout_height="55dp"
         android:layout_marginTop="296dp"
         android:background="@drawable/button"
-        android:text="START"
+        android:text="PLAY"
+        android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,23 +39,27 @@
 
     <Button
         android:id="@+id/btnGuide"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
+        android:layout_width="175dp"
+        android:layout_height="55dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/button"
         android:text="GUIDE"
+        android:textSize="20dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnGo" />
+        app:layout_constraintTop_toBottomOf="@+id/btnPlay" />
 
     <Button
         android:id="@+id/btnInfo"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
+        android:layout_width="175dp"
+        android:layout_height="55dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/button"
         android:text="INFO"
+        android:textSize="20dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

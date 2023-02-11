@@ -3,7 +3,10 @@ package com.example.demogame;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.Dialog;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -11,10 +14,13 @@ import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -156,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 // Who win? and get point
                 if (player1.getProgress() >= player1.getMax()) {
                     cancelCountDownTimer();
-                    customToast("The GREEN BIRD win!");
+                    showWinner(Gravity.CENTER, "GREEN BIRD!", R.drawable.icon_bird_green);
 
                     // Recieve point
                     recievePoint += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
@@ -215,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 // Who win? and get point
                 if (player2.getProgress() >= player2.getMax()) {
                     cancelCountDownTimer();
-                    customToast("The YELLOW BIRD win!");
+                    showWinner(Gravity.CENTER, "YELLOW BIRD!", R.drawable.icon_bird_yellow);
 
                     // Recieve point
                     recievePoint += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
@@ -268,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 // Who win? and get point
                 if (player3.getProgress() >= player3.getMax()) {
                     cancelCountDownTimer();
-                    customToast("The RED BIRD win!");
+                    showWinner(Gravity.CENTER, "RED BIRD!", R.drawable.icon_bird_red_mask);
 
                     // Recieve point
                     recievePoint += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
@@ -578,5 +584,38 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = MediaPlayer.create(MainActivity.this,R.raw.music);
     }
 
+    void showWinner(int gravity, String text, int imgResID){
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.layout_dialog_winner);
+
+        Window window = dialog.getWindow();
+        if(window == null){
+            return;
+        }
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        WindowManager.LayoutParams windowAttributes = window.getAttributes();
+        windowAttributes.gravity = gravity;
+        window.setAttributes(windowAttributes);
+
+        TextView txtDetail = dialog.findViewById(R.id.txtDetail);
+        ImageView imgIcon = dialog.findViewById(R.id.imgIcon);
+        Button btnContinue = dialog.findViewById(R.id.btnContinue);
+
+        txtDetail.setText(text);
+        imgIcon.setImageResource(imgResID);
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+
+    }
 }
 
