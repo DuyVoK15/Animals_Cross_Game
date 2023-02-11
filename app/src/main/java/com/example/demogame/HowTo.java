@@ -13,7 +13,5 @@ public class HowTo extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home);
 
-//        txt1 = (TextView) findViewById(R.id.text1);
-//        txt1.setText(Html.fromHtml(getResources().getString(R.string.sample_string)));
     }
 }

@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 // Who win? and get point
                 if (player1.getProgress() >= player1.getMax()) {
                     cancelCountDownTimer();
-                    showWinner(Gravity.CENTER, "GREEN BIRD!", R.drawable.icon_bird_green);
+                    showWinner(Gravity.CENTER, "GREEN BIRD!", R.drawable.icon_big_green);
 
                     // Recieve point
                     recievePoint += (cbPlayer1.isChecked()) ? +Integer.parseInt(txtBetAmount1) : -Integer.parseInt(txtBetAmount1);
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 // Who win? and get point
                 if (player2.getProgress() >= player2.getMax()) {
                     cancelCountDownTimer();
-                    showWinner(Gravity.CENTER, "YELLOW BIRD!", R.drawable.icon_bird_yellow);
+                    showWinner(Gravity.CENTER, "YELLOW BIRD!", R.drawable.icon_big_yellow);
 
                     // Recieve point
                     recievePoint += (cbPlayer2.isChecked()) ? +Integer.parseInt(txtBetAmount2) : -Integer.parseInt(txtBetAmount2);
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
                 // Who win? and get point
                 if (player3.getProgress() >= player3.getMax()) {
                     cancelCountDownTimer();
-                    showWinner(Gravity.CENTER, "RED BIRD!", R.drawable.icon_bird_red_mask);
+                    showWinner(Gravity.CENTER, "RED BIRD!", R.drawable.icon_big_red);
 
                     // Recieve point
                     recievePoint += (cbPlayer3.isChecked()) ? +Integer.parseInt(txtBetAmount3) : -Integer.parseInt(txtBetAmount3);
