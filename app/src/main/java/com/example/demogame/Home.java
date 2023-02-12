@@ -27,8 +27,6 @@ public class Home extends AppCompatActivity {
         btnGuide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 b.setTitle("GUIDE AND RULE PLAY");
                 b.setMessage("Game is very simple");
 
@@ -37,7 +35,6 @@ public class Home extends AppCompatActivity {
 
                     }
                 });
-
 
                 AlertDialog al = b.create();
 
