@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                     edtPlayer2.setText("");
                 } else {
                     edtPlayer2.setVisibility(View.GONE);
-                    edtPlayer2.setText("0");
+                    edtPlayer2.setText("");
                 }
 
                 if (!cbPlayer2.isChecked()) {
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     edtPlayer3.setText("");
                 } else {
                     edtPlayer3.setVisibility(View.GONE);
-                    edtPlayer3.setText("0");
+                    edtPlayer3.setText("");
                 }
 
                 if (!cbPlayer3.isChecked()) {
@@ -198,8 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // Set speed Random
                 speedRandom1(7);
-
-
             }
 
             @Override
