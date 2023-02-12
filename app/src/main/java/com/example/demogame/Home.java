@@ -28,7 +28,10 @@ public class Home extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 b.setTitle("GUIDE AND RULE PLAY");
-                b.setMessage("Game is very simple");
+                b.setMessage("1. Please enter the number of bets you want in the box.\n" +
+                        "2. Then, press Start to start the game\n" +
+                        "3. When the game is over, a message will appear\n" +
+                        "4. Click Restart to play again from the beginning");
 
                 b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -49,10 +52,10 @@ public class Home extends AppCompatActivity {
 
                 b.setTitle("INFORMATION");
                 b.setMessage("Vo Thanh Duy\n" +
-                        "Nguyen Quoc Lam\n" +
+                        "Ly Quoc Lam\n" +
                         "Pham Huu Phuc\n" +
                         "Pham Huu Anh Tai\n" +
-                        "Nguyen Quang Trung\n" +
+                        "Dang Quang Trung\n" +
                         "Tran Anh Tuan\n");
 
                 b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -60,7 +63,6 @@ public class Home extends AppCompatActivity {
 
                     }
                 });
-
 
                 AlertDialog al = b.create();
 
@@ -81,7 +83,6 @@ public class Home extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
-
     }
 
 
